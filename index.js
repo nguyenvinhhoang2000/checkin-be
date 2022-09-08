@@ -33,6 +33,10 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+app.get("/", async (req, res) => {
+  res.json("HOME")
+})
+
 app.use("/api/auth", authRouter);
 
 const PORT = process.env.PORT || 5000;
