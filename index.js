@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 
-const authRouter = require("./Routes/auth");
+const authRouter = require("./routes/auth");
 
 const connecDB = async () => {
   try {
