@@ -41,6 +41,5 @@ app.use("api/v1/songs", songRouter);
 app.use("api/v1/favorite-song", favoriteSongRouter);
 app.use("api/v1/playlist", Playlist);
 
-const PORT = 3001;
 
-app.listen(PORT, () => console.log(`server started on port ${PORT}`));
+app.listen(process.env.PORT, () => console.log(`server started on port ${PORT}`));
