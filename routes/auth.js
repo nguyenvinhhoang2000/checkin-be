@@ -27,6 +27,7 @@ let transporter = nodemailer.createTransport({
 //     console.log(success);
 //   }
 // })
+//
 
 // get otp verify email
 router.post("/get-otp", async (req, res) => {
