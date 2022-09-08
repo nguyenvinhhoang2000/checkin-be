@@ -5,9 +5,6 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 
 const authRouter = require("./Routes/auth");
-const songRouter = require("./Routes/song");
-const favoriteSongRouter = require("./Routes/favoriteSong");
-const Playlist = require("./Routes/playlist");
 
 const connecDB = async () => {
   try {
@@ -37,9 +34,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use("/api/auth", authRouter);
-app.use("api/v1/songs", songRouter);
-app.use("api/v1/favorite-song", favoriteSongRouter);
-app.use("api/v1/playlist", Playlist);
 
 
 app.listen(process.env.PORT, () => console.log(`server started on port ${PORT}`));
