@@ -9,7 +9,7 @@ const upload = require("../utils/multer");
 const cloudinary = require("../utils/cloudinary");
 const verifyToken = require("../middleware/auth");
 
-const User = require("../Models/User");
+const User = require("../models/User");
 const UserOTPVerification = require("../models/UserOTPVerification");
 
 let transporter = nodemailer.createTransport({
