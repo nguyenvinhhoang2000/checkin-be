@@ -15,8 +15,8 @@ const UserOTPVerification = require("../models/UserOTPVerification");
 let transporter = nodemailer.createTransport({
   host: "smtp-mail.outlook.com",
   auth: {
-    user: process.env.AUTH_EMAIL,
-    pass: process.env.AUTH_PASS,
+    user: 'nguyenvinhhoang2000@outlook.com',
+    pass: 'Vn0914451879@',
   }
 })
 
@@ -46,7 +46,7 @@ router.post("/get-otp", async (req, res) => {
 
     // mail options
     const mailOptions = {
-      from: process.env.AUTH_EMAIL,
+      from: 'nguyenvinhhoang2000@outlook.com',
       to: email,
       subject: "Verify your Email",
       html: `<p>Mã xác nhận của bạn là <b>${otp}</b>.</p>`
