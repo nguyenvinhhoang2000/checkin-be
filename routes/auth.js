@@ -131,7 +131,7 @@ router.post("/verify-otp", async (req, res) => {
 // @desc Register User
 // @access Public
 router.post("/register", async (req, res) => {
-  const { email, password, role, name, phoneNumber } = req.body;
+  const { email, password, role, firstName, lastName, phoneNumber } = req.body;
 
   try {
     //upload image
@@ -145,7 +145,8 @@ router.post("/register", async (req, res) => {
       email,
       password: hashedPassword,
       role,
-      name,
+      firstName,
+      lastName,
       phoneNumber,
     });
     await newUser.save()
