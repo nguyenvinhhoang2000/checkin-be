@@ -9,12 +9,15 @@ const TargetGroup = require("../models/TargetGroup");
 // @access Public
 router.get("/", verifyToken, async (req, res) => {
     try {
-        const targetGroups = await TargetGroup.find({ user: req.userId });
+        const targetGroups = await TargetGroup.find({ user: req.userId }).sort({ createdAt: -1 });
 
         res.status(200).json({
             success: true,
             message: "Lấy thông tin cửa hàng thành công",
-            data: targetGroups,
+            data: {
+                list: targetGroups,
+                total: targetGroups.length,
+            },
         })
     } catch (error) {
         res.status(200).json({
@@ -30,34 +33,47 @@ router.get("/", verifyToken, async (req, res) => {
 router.post("/", verifyToken, async (req, res) => {
     try {
         const { 
-            storeName,
-            phoneNumber,
-            email,
-            address,
-            province,
-            district,
-            ward,
-            business,
+            name,
+            groupCode,
+            description,
+            defaultDiscount,
         } = req.body;
 
-        const newShop = new Shop({
-            userId: req.userId,
-            storeName,
-            phoneNumber,
-            email,
-            address,
-            province,
-            district,
-            ward,
-            business,
-        })
+        if (groupCode) {
+            const newTargetGroup = new TargetGroup({
+                user: req.userId,
+                name,
+                groupCode,
+                description,
+                defaultDiscount,
+            })
 
-        await newShop.save()
+            await newTargetGroup.save()
 
-        res.status(200).json({
-            success: true,
-            message: "Cập nhập thông tin cửa hàng thành công",
-        })
+            res.status(200).json({
+                success: true,
+                message: "Thêm nhóm khách hàng thành công",
+                data: newTargetGroup,
+            })
+        } else {
+            const groupCodeGenerate = `${Math.floor(10000 + Math.random() * 90000)}`
+
+            const newTargetGroup = new TargetGroup({
+                user: req.userId,
+                name,
+                groupCode: groupCodeGenerate,
+                description,
+                defaultDiscount,
+            })
+
+            await newTargetGroup.save()
+
+            res.status(200).json({
+                success: true,
+                message: "Thêm nhóm khách hàng thành công",
+                data: newTargetGroup,
+            })
+        }
     } catch (error) {
         console.log(error);
         res.status(500).json({ success: false, message: "Có gì đó sai sai!" });

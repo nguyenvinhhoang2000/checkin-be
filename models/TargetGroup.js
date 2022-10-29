@@ -12,7 +12,6 @@ const TargetGroup = new Schema({
   },
   groupCode: {
     type: String,
-    required: true,
   },
   description: {
     type: String,
@@ -25,6 +24,10 @@ const TargetGroup = new Schema({
   totalUser: {
     type: Number,
     default: 0,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
 });
 
