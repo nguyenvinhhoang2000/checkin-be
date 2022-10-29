@@ -9,6 +9,6 @@ const UserOTPVerificationShchema = new Schema({
 })
 
 module.exports = mongoose.model(
-    "UserOTPVerification",
+    "user_otp_verification",
     UserOTPVerificationShchema
 );
