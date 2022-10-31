@@ -7,7 +7,8 @@ const cors = require("cors");
 const authRouter = require("./routes/auth");
 const userRouter = require("./routes/user");
 const shopRouter = require("./routes/shop");
-const targetGroupRouter = require("./routes/targetGroup");
+const customerGroupRouter = require("./routes/customerGroup");
+const supplierGroupRouter = require("./routes/supplierGroup");
 
 const connecDB = async () => {
   try {
@@ -43,7 +44,8 @@ app.get("/", async (req, res) => {
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
 app.use("/api/shop", shopRouter);
-app.use("/api/target-group", targetGroupRouter);
+app.use("/api/customer-group", customerGroupRouter);
+app.use("/api/supplier-group", supplierGroupRouter);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`server started on port ${PORT}`));

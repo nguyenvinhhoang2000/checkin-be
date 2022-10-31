@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const TargetGroup = new Schema({
+const CustomerGroup = new Schema({
   user: {
     type: Schema.Types.ObjectId,
     ref: "users",
@@ -31,4 +31,4 @@ const TargetGroup = new Schema({
   },
 });
 
-module.exports = mongoose.model("target_group", TargetGroup);
+module.exports = mongoose.model("customer_group", CustomerGroup);
