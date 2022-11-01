@@ -2,21 +2,21 @@ const express = require("express");
 const router = express.Router();
 const verifyToken = require("../middleware/auth");
 
-const SupplierGroup = require("../models/SupplierGroup");
+const Customer = require("../models/Customer");
 
-// @route POST api/supplier-group
+// @route POST api/target-group
 // @desc Register User
 // @access Public
 router.get("/", verifyToken, async (req, res) => {
     try {
-        const supplierGroup = await SupplierGroup.find({ user: req.userId }).sort({ createdAt: -1 });
+        const customer = await Customer.find({ user: req.userId }).sort({ createdAt: -1 });
 
         res.status(200).json({
             success: true,
-            message: "Lấy thông tin nhóm nhà cung cấp thành công",
+            message: "Lấy danh sách khách hàng thành công",
             data: {
-                list: supplierGroup,
-                total: supplierGroup.length,
+                list: customer,
+                total: customer.length,
             },
         })
     } catch (error) {
@@ -27,51 +27,81 @@ router.get("/", verifyToken, async (req, res) => {
     }
 })
 
-// @route get api/supplier-group
+// @route get api/target-group
 // @desc Profile
 // @access Public
 router.post("/", verifyToken, async (req, res) => {
     try {
-        const { 
+        const {
+            phoneNumber,
             name,
-            groupCode,
-            description,
-            defaultDiscount,
+            customerCode,
+            birthday,
+            status,
+            customerGroup,
+            sex,
+            address,
+            province,
+            district,
+            ward,
+            link,
+            avatar,
+            cloudinary_id,
         } = req.body;
 
-        if (groupCode) {
-            const newTargetGroup = new SupplierGroup({
+        if (customerCode) {
+            const newCustomer = new Customer({
                 user: req.userId,
+                phoneNumber,
                 name,
-                groupCode,
-                description,
-                defaultDiscount,
+                customerCode,
+                birthday,
+                status,
+                customerGroup,
+                sex,
+                address,
+                province,
+                district,
+                ward,
+                link,
+                avatar,
+                cloudinary_id,
             })
 
-            await newTargetGroup.save()
+            await newCustomer.save()
 
             res.status(200).json({
                 success: true,
-                message: "Thêm nhóm nhà cung cấp thành công",
-                data: newTargetGroup,
+                message: "Thêm nhóm khách hàng thành công",
+                data: newCustomer,
             })
         } else {
             const groupCodeGenerate = `${Math.floor(10000 + Math.random() * 90000)}`
 
-            const newTargetGroup = new SupplierGroup({
+            const newCustomer = new Customer({
                 user: req.userId,
+                phoneNumber,
                 name,
-                groupCode: groupCodeGenerate,
-                description,
-                defaultDiscount,
+                customerCode: groupCodeGenerate,
+                birthday,
+                status,
+                customerGroup,
+                sex,
+                address,
+                province,
+                district,
+                ward,
+                link,
+                avatar,
+                cloudinary_id,
             })
 
-            await newTargetGroup.save()
+            await newCustomer.save()
 
             res.status(200).json({
                 success: true,
-                message: "Thêm nhóm nhà cung cấp thành công",
-                data: newTargetGroup,
+                message: "Thêm nhóm khách hàng thành công",
+                data: newCustomer,
             })
         }
     } catch (error) {
@@ -92,15 +122,15 @@ router.put("/:id", verifyToken, async (req, res) => {
             defaultDiscount,
         } = req.body;
 
-        let supplierGroup = SupplierGroup.findOne({
+        let customerGroup = Customer.findOne({
             user: req.userId,
             _id: req.params.id,
         })
 
-        if (!supplierGroup) {
+        if (!customerGroup) {
             res
             .status(400)
-            .json({ success: false, message: "Không tìm thấy nhóm nhà cung cấp" });
+            .json({ success: false, message: "Không tìm thấy nhóm khách hàng" });
         }
 
         if (groupCode) {
@@ -111,11 +141,11 @@ router.put("/:id", verifyToken, async (req, res) => {
                 defaultDiscount,
             }
 
-            await SupplierGroup.findByIdAndUpdate(req.params.id, data);
+            await Customer.findByIdAndUpdate(req.params.id, data);
 
             res.status(200).json({
                 success: true,
-                message: "Sửa nhóm nhà cung cấp thành công",
+                message: "Sửa nhóm khách hàng thành công",
                 data: {
                     _id: req.params.id,
                     ...data,
@@ -131,11 +161,11 @@ router.put("/:id", verifyToken, async (req, res) => {
                 defaultDiscount,
             }
 
-            await CustomerGroup.findByIdAndUpdate(req.params.id, data);
+            await Customer.findByIdAndUpdate(req.params.id, data);
 
             res.status(200).json({
                 success: true,
-                message: "Sửa nhóm nhà cung cấp thành công",
+                message: "Sửa nhóm khách hàng thành công",
                 data: {
                     _id: req.params.id,
                     ...data,
@@ -153,7 +183,7 @@ router.put("/:id", verifyToken, async (req, res) => {
 // @access Public
 router.delete("/:id", verifyToken, async (req, res) => {
     try {
-        const supplierDelete = await SupplierGroup.findOneAndDelete({
+        const customerDelete = await Customer.findOneAndDelete({
             user: req.userId,
             _id: req.params.id
         })
@@ -161,11 +191,12 @@ router.delete("/:id", verifyToken, async (req, res) => {
         res.status(200).json({
             success: true,
             message: "Xóa nhóm khách hàng thành công",
-            data: supplierDelete,
+            data: customerDelete,
         })
     } catch (error) {
         console.log(error);
         res.status(500).json({ success: false, message: "Có gì đó sai sai!" });
     }
 });
+
 module.exports = router;
