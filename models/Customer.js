@@ -53,6 +53,10 @@ const Customer = new Schema({
     type: String,
     default: "",
   },
+  note: {
+    type: String,
+    default: "",
+  },
   avatar: {
     type: String,
     default: "",

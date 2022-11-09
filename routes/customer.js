@@ -9,7 +9,7 @@ const Customer = require("../models/Customer");
 // @access Public
 router.get("/", verifyToken, async (req, res) => {
     try {
-        const customer = await Customer.find({ user: req.userId }).sort({ createdAt: -1 });
+        const customer = await Customer.find({ user: req.userId }).populate({ path: 'customerGroup'}).sort({ createdAt: -1 });
 
         res.status(200).json({
             success: true,
@@ -45,6 +45,7 @@ router.post("/", verifyToken, async (req, res) => {
             district,
             ward,
             link,
+            note,
             avatar,
             cloudinary_id,
         } = req.body;
@@ -64,6 +65,7 @@ router.post("/", verifyToken, async (req, res) => {
                 district,
                 ward,
                 link,
+                note,
                 avatar,
                 cloudinary_id,
             })
@@ -92,6 +94,7 @@ router.post("/", verifyToken, async (req, res) => {
                 district,
                 ward,
                 link,
+                note,
                 avatar,
                 cloudinary_id,
             })
