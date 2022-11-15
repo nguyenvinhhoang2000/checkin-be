@@ -16,6 +16,7 @@ const Customer = new Schema({
   },
   customerCode: {
     type: String,
+    unique: true,
   },
   birthday: {
     type: String,

@@ -12,6 +12,7 @@ const CustomerGroup = new Schema({
   },
   groupCode: {
     type: String,
+    unique: true,
   },
   description: {
     type: String,

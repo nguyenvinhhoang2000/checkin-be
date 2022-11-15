@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const SupplierGroup = new Schema({
+const Unit = new Schema({
   user: {
     type: Schema.Types.ObjectId,
     ref: "users",
@@ -10,7 +10,11 @@ const SupplierGroup = new Schema({
     type: String,
     required: true,
   },
-  groupCode: {
+  unit: {
+    type: String,
+    required: true,
+  },
+  unitCode: {
     type: String,
     unique: true,
   },
@@ -18,18 +22,10 @@ const SupplierGroup = new Schema({
     type: String,
     default: '',
   },
-  defaultDiscount: {
-    type: Number,
-    default: 0,
-  },
-  totalUser: {
-    type: Number,
-    default: 0,
-  },
   createdAt: {
     type: Date,
     default: Date.now,
   },
 });
 
-module.exports = mongoose.model("supplier_group", SupplierGroup);
+module.exports = mongoose.model("unit", Unit);
