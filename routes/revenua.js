@@ -2,23 +2,21 @@ const express = require("express");
 const router = express.Router();
 const verifyToken = require("../middleware/auth");
 
-const Products = require("../models/Products");
+const Revenua = require("../models/Revenua");
 
-// @route POST api/target-group
+// @route POST api/revenua
 // @desc Register User
 // @access Public
 router.get("/", verifyToken, async (req, res) => {
     try {
-        const products = await Products.find({ user: req.userId })
-        .populate([{path: 'unit'}, {path: 'productGroup'}])
-        .sort({ createdAt: -1 });
+        const revenuaList = await Revenua.find({ user: req.userId }).sort({ createdAt: -1 });
 
         res.status(200).json({
             success: true,
-            message: "Lấy thông tin sản phẩm thành công",
+            message: "Lấy thông tin loại thu thành công",
             data: {
-                list: products,
-                total: products.length,
+                list: revenuaList,
+                total: revenuaList.length,
             },
         })
     } catch (error) {
@@ -36,71 +34,41 @@ router.post("/", verifyToken, async (req, res) => {
     try {
         const { 
             name,
-            productCode,
-            productGroup,
-            status,
+            revenuaCode,
             description,
-            isHidden,
-            price,
-            costPrice,
-            inventoryNumber,
-            mass,
-            unit,
-            avatar,
-            cloudinary_id,
         } = req.body;
 
-        if (productCode) {
-            const product = new Products({
+        if (revenuaCode) {
+            const newRevenua = new Revenua({
                 user: req.userId,
                 name,
-                productCode,
-                productGroup,
-                status,
+                revenuaCode,
                 description,
-                isHidden,
-                price,
-                costPrice,
-                inventoryNumber,
-                mass,
-                unit,
-                avatar,
-                cloudinary_id,
             })
 
-            await product.save()
+            await newRevenua.save()
 
             res.status(200).json({
                 success: true,
-                message: "Thêm sản phẩm thành công",
-                data: product,
+                message: "Thêm loại thu thành công",
+                data: newRevenua,
             })
         } else {
-            const productCodeGenerate = `${Math.floor(10000 + Math.random() * 90000)}`
+            const revenuaCodeGenerate = `${Math.floor(10000 + Math.random() * 90000)}`
 
-            const product = new Products({
+            const newRevenua = new Revenua({
                 user: req.userId,
                 name,
-                productCode: productCodeGenerate,
-                productGroup,
-                status,
+                revenuaCode: revenuaCodeGenerate,
                 description,
-                isHidden,
-                price,
-                costPrice,
-                inventoryNumber,
-                mass,
-                unit,
-                avatar,
-                cloudinary_id,
             })
 
-            await product.save()
+            await newRevenua.save()
 
             res.status(200).json({
                 success: true,
-                message: "Thêm sản phẩm thành công",
-                data: product,
+                message: "Thêm loại thu thành công",
+                data: newRevenua,
             })
         }
     } catch (error) {
@@ -116,55 +84,52 @@ router.put("/:id", verifyToken, async (req, res) => {
     try {
         const {
             name,
-            groupCode,
+            revenuaCode,
             description,
-            defaultDiscount,
         } = req.body;
 
-        let customerGroup = Products.findOne({
+        let revenua = Revenua.findOne({
             user: req.userId,
             _id: req.params.id,
         })
 
-        if (!customerGroup) {
+        if (!revenua) {
             res
             .status(400)
-            .json({ success: false, message: "Không tìm thấy nhóm khách hàng" });
+            .json({ success: false, message: "Không tìm thấy loại thu" });
         }
 
-        if (groupCode) {
+        if (revenuaCode) {
             const data = {
                 name,
-                groupCode,
+                revenuaCode,
                 description,
-                defaultDiscount,
             }
 
-            await Products.findByIdAndUpdate(req.params.id, data);
+            await Revenua.findByIdAndUpdate(req.params.id, data);
 
             res.status(200).json({
                 success: true,
-                message: "Sửa nhóm khách hàng thành công",
+                message: "Sửa loại thu thành công",
                 data: {
                     _id: req.params.id,
                     ...data,
                 },
             })
         } else {
-            const groupCodeGenerate = `${Math.floor(10000 + Math.random() * 90000)}`
+            const revenuaCodeGenerate = `${Math.floor(10000 + Math.random() * 90000)}`
 
             const data = {
                 name,
-                groupCode: groupCodeGenerate,
+                revenuaCode: revenuaCodeGenerate,
                 description,
-                defaultDiscount,
             }
 
-            await Products.findByIdAndUpdate(req.params.id, data);
+            await Revenua.findByIdAndUpdate(req.params.id, data);
 
             res.status(200).json({
                 success: true,
-                message: "Sửa nhóm khách hàng thành công",
+                message: "Sửa loại thu thành công",
                 data: {
                     _id: req.params.id,
                     ...data,
@@ -182,15 +147,15 @@ router.put("/:id", verifyToken, async (req, res) => {
 // @access Public
 router.delete("/:id", verifyToken, async (req, res) => {
     try {
-        const customerDelete = await Products.findOneAndDelete({
+        const revenuaDelete = await Revenua.findOneAndDelete({
             user: req.userId,
             _id: req.params.id
         })
 
         res.status(200).json({
             success: true,
-            message: "Xóa nhóm khách hàng thành công",
-            data: customerDelete,
+            message: "Xóa loại thu thành công",
+            data: revenuaDelete,
         })
     } catch (error) {
         console.log(error);

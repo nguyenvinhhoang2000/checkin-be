@@ -14,6 +14,8 @@ const unitRouter = require("./routes/unit");
 const mediaRouter = require("./routes/media");
 const productGroupRouter = require("./routes/productGroup");
 const productsRouter = require("./routes/products");
+const revenuaRouter = require("./routes/revenua");
+const expenditureRouter = require("./routes/expenditure");
 
 const connecDB = async () => {
   try {
@@ -56,6 +58,8 @@ app.use("/api/unit", unitRouter);
 app.use("/api/media", mediaRouter);
 app.use("/api/product-group", productGroupRouter);
 app.use("/api/products", productsRouter);
+app.use("/api/revenuas", revenuaRouter);
+app.use("/api/expenditures", expenditureRouter);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`server started on port ${PORT}`));

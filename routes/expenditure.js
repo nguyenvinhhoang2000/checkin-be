@@ -2,23 +2,21 @@ const express = require("express");
 const router = express.Router();
 const verifyToken = require("../middleware/auth");
 
-const Products = require("../models/Products");
+const Expenditure = require("../models/Expenditure");
 
-// @route POST api/target-group
+// @route POST api/expenditures
 // @desc Register User
 // @access Public
 router.get("/", verifyToken, async (req, res) => {
     try {
-        const products = await Products.find({ user: req.userId })
-        .populate([{path: 'unit'}, {path: 'productGroup'}])
-        .sort({ createdAt: -1 });
+        const expenditureList = await Expenditure.find({ user: req.userId }).sort({ createdAt: -1 });
 
         res.status(200).json({
             success: true,
-            message: "Lấy thông tin sản phẩm thành công",
+            message: "Lấy thông tin loại chi thành công",
             data: {
-                list: products,
-                total: products.length,
+                list: expenditureList,
+                total: expenditureList.length,
             },
         })
     } catch (error) {
@@ -29,78 +27,48 @@ router.get("/", verifyToken, async (req, res) => {
     }
 })
 
-// @route get api/target-group
+// @route get api/expenditures
 // @desc Profile
 // @access Public
 router.post("/", verifyToken, async (req, res) => {
     try {
         const { 
             name,
-            productCode,
-            productGroup,
-            status,
+            expenditureCode,
             description,
-            isHidden,
-            price,
-            costPrice,
-            inventoryNumber,
-            mass,
-            unit,
-            avatar,
-            cloudinary_id,
         } = req.body;
 
-        if (productCode) {
-            const product = new Products({
+        if (expenditureCode) {
+            const newExpenditure = new Expenditure({
                 user: req.userId,
                 name,
-                productCode,
-                productGroup,
-                status,
+                expenditureCode,
                 description,
-                isHidden,
-                price,
-                costPrice,
-                inventoryNumber,
-                mass,
-                unit,
-                avatar,
-                cloudinary_id,
             })
 
-            await product.save()
+            await newExpenditure.save()
 
             res.status(200).json({
                 success: true,
-                message: "Thêm sản phẩm thành công",
-                data: product,
+                message: "Thêm loại chi thành công",
+                data: newExpenditure,
             })
         } else {
-            const productCodeGenerate = `${Math.floor(10000 + Math.random() * 90000)}`
+            const expenditureCodeGenerate = `${Math.floor(10000 + Math.random() * 90000)}`
 
-            const product = new Products({
+            const newExpenditure = new Expenditure({
                 user: req.userId,
                 name,
-                productCode: productCodeGenerate,
-                productGroup,
-                status,
+                expenditureCode: expenditureCodeGenerate,
                 description,
-                isHidden,
-                price,
-                costPrice,
-                inventoryNumber,
-                mass,
-                unit,
-                avatar,
-                cloudinary_id,
             })
 
-            await product.save()
+            await newExpenditure.save()
 
             res.status(200).json({
                 success: true,
-                message: "Thêm sản phẩm thành công",
-                data: product,
+                message: "Thêm loại chi thành công",
+                data: newExpenditure,
             })
         }
     } catch (error) {
@@ -116,55 +84,52 @@ router.put("/:id", verifyToken, async (req, res) => {
     try {
         const {
             name,
-            groupCode,
+            expenditureCode,
             description,
-            defaultDiscount,
         } = req.body;
 
-        let customerGroup = Products.findOne({
+        let revenua = Expenditure.findOne({
             user: req.userId,
             _id: req.params.id,
         })
 
-        if (!customerGroup) {
+        if (!revenua) {
             res
             .status(400)
-            .json({ success: false, message: "Không tìm thấy nhóm khách hàng" });
+            .json({ success: false, message: "Không tìm thấy loại chi" });
         }
 
-        if (groupCode) {
+        if (expenditureCode) {
             const data = {
                 name,
-                groupCode,
+                expenditureCode,
                 description,
-                defaultDiscount,
             }
 
-            await Products.findByIdAndUpdate(req.params.id, data);
+            await Expenditure.findByIdAndUpdate(req.params.id, data);
 
             res.status(200).json({
                 success: true,
-                message: "Sửa nhóm khách hàng thành công",
+                message: "Sửa loại chi thành công",
                 data: {
                     _id: req.params.id,
                     ...data,
                 },
             })
         } else {
-            const groupCodeGenerate = `${Math.floor(10000 + Math.random() * 90000)}`
+            const expenditureCodeGenerate = `${Math.floor(10000 + Math.random() * 90000)}`
 
             const data = {
                 name,
-                groupCode: groupCodeGenerate,
+                expenditureCode: expenditureCodeGenerate,
                 description,
-                defaultDiscount,
             }
 
-            await Products.findByIdAndUpdate(req.params.id, data);
+            await Expenditure.findByIdAndUpdate(req.params.id, data);
 
             res.status(200).json({
                 success: true,
-                message: "Sửa nhóm khách hàng thành công",
+                message: "Sửa loại chi thành công",
                 data: {
                     _id: req.params.id,
                     ...data,
@@ -182,15 +147,15 @@ router.put("/:id", verifyToken, async (req, res) => {
 // @access Public
 router.delete("/:id", verifyToken, async (req, res) => {
     try {
-        const customerDelete = await Products.findOneAndDelete({
+        const revenuaDelete = await Expenditure.findOneAndDelete({
             user: req.userId,
             _id: req.params.id
         })
 
         res.status(200).json({
             success: true,
-            message: "Xóa nhóm khách hàng thành công",
-            data: customerDelete,
+            message: "Xóa loại chi thành công",
+            data: revenuaDelete,
         })
     } catch (error) {
         console.log(error);
