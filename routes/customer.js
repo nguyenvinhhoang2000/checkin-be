@@ -7,6 +7,26 @@ const Customer = require("../models/Customer");
 // @route POST api/target-group
 // @desc Register User
 // @access Public
+router.get("/all", verifyToken, async (req, res) => {
+    try {
+        const customer = await Customer.find({ user: req.userId, status: "TRADING" }).populate({ path: 'customerGroup'}).sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            message: "Lấy danh sách khách hàng thành công",
+            data: customer,
+        })
+    } catch (error) {
+        res.status(200).json({
+            success: false,
+            message: error.message,
+        })
+    }
+})
+
+// @route POST api/target-group
+// @desc Register User
+// @access Public
 router.get("/", verifyToken, async (req, res) => {
     try {
         const customer = await Customer.find({ user: req.userId }).populate({ path: 'customerGroup'}).sort({ createdAt: -1 });

@@ -16,6 +16,8 @@ const productGroupRouter = require("./routes/productGroup");
 const productsRouter = require("./routes/products");
 const revenuaRouter = require("./routes/revenua");
 const expenditureRouter = require("./routes/expenditure");
+const receiptRouter = require("./routes/receipts");
+const paymentRouter = require("./routes/payments");
 
 const connecDB = async () => {
   try {
@@ -60,6 +62,8 @@ app.use("/api/product-group", productGroupRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/revenuas", revenuaRouter);
 app.use("/api/expenditures", expenditureRouter);
+app.use("/api/receipt", receiptRouter);
+app.use("/api/payment", paymentRouter);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`server started on port ${PORT}`));
