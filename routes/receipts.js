@@ -77,16 +77,6 @@ router.post("/", verifyToken, async (req, res) => {
 // @access Public
 router.put("/:id", verifyToken, async (req, res) => {
     try {
-        const { 
-            revenua,
-            targetGroup,
-            target,
-            paymentMethod,
-            price,
-            receiptCode,
-            note,
-        } = req.body;
-
         let receipts = Receipts.findOne({
             user: req.userId,
             _id: req.params.id,
@@ -99,43 +89,14 @@ router.put("/:id", verifyToken, async (req, res) => {
         }
 
         const data = {
-            revenua,
-            targetGroup,
-            target,
-            paymentMethod,
-            price,
-            note,
+            status: "CANCEL"
         }
 
         await Receipts.findByIdAndUpdate(req.params.id, data);
 
-        const receiptSaved = await Receipts.findOne({ _id: req.params.id  }).populate({ path: 'revenua'})
-
         res.status(200).json({
             success: true,
-            message: "Sửa phiếu thu thành công",
-            data: receiptSaved,
-        })
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ success: false, message: "Có gì đó sai sai!" });
-    }
-});
-
-// @route delete api/customer-group
-// @desc customer-group
-// @access Public
-router.delete("/:id", verifyToken, async (req, res) => {
-    try {
-        const receiptsDelete = await Receipts.findOneAndDelete({
-            user: req.userId,
-            _id: req.params.id
-        })
-
-        res.status(200).json({
-            success: true,
-            message: "Xóa phiếu thu thành công",
-            data: receiptsDelete,
+            message: "Hủy phiếu thu thành công",
         })
     } catch (error) {
         console.log(error);

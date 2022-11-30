@@ -22,6 +22,10 @@ const Receipts = new Schema({
     type: String,
     required: true,
   },
+  status: {
+    type: String,
+    default: 'ACTIVE',
+  },
   price: {
     type: String,
     required: true,
