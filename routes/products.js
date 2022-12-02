@@ -7,6 +7,28 @@ const Products = require("../models/Products");
 // @route POST api/target-group
 // @desc Register User
 // @access Public
+router.get("/all", verifyToken, async (req, res) => {
+    try {
+        const products = await Products.find({ user: req.userId, status: 'SELLING', isHidden: false })
+        .populate([{path: 'unit'}, {path: 'productGroup'}])
+        .sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            message: "Lấy thông tin sản phẩm thành công",
+            data: products,
+        })
+    } catch (error) {
+        res.status(200).json({
+            success: false,
+            message: error.message,
+        })
+    }
+})
+
+// @route POST api/target-group
+// @desc Register User
+// @access Public
 router.get("/", verifyToken, async (req, res) => {
     try {
         const products = await Products.find({ user: req.userId })
