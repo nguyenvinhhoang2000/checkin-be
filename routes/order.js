@@ -49,10 +49,12 @@ router.post("/", verifyToken, async (req, res) => {
             ward,
             quantitySum,
             totalProductCost,
-            disscount,
+            discount,
             serviceFee,
             totalOrderCost,
             status,
+            pay,
+            receipts,
         } = req.body;
 
         const orderCodeGenerate = `${Math.floor(10000 + Math.random() * 90000)}`
@@ -74,10 +76,12 @@ router.post("/", verifyToken, async (req, res) => {
             ward,
             quantitySum,
             totalProductCost,
-            disscount,
+            discount,
             serviceFee,
             totalOrderCost,
             status,
+            pay,
+            receipts,
         })
 
         await newOrder.save()

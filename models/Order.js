@@ -18,6 +18,10 @@ const Order = new Schema({
     type: Array,
     required: true,
   },
+  receipts: {
+    type: Array,
+    default: [],
+  },
   shippingUnit: {
     type: String,
     default: '',
@@ -66,7 +70,7 @@ const Order = new Schema({
     type: Number,
     default: 0,
   },
-  disscount: {
+  discount: {
     type: Number,
     default: 0,
   },
