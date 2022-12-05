@@ -41,7 +41,7 @@ connecDB();
 const app = express();
 app.use(express.json());
 
-// app.use(cors());
+app.use(cors());
 
 // parse application/json
 app.use(bodyParser.urlencoded({ extended: true }));
