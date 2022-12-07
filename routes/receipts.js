@@ -76,6 +76,7 @@ router.post("/", verifyToken, async (req, res) => {
 // @desc customer-group
 // @access Public
 router.put("/:id", verifyToken, async (req, res) => {
+    // const { note } = req.body
     try {
         let receipts = Receipts.findOne({
             user: req.userId,
@@ -89,6 +90,7 @@ router.put("/:id", verifyToken, async (req, res) => {
         }
 
         const data = {
+            // note,
             status: "CANCEL"
         }
 

@@ -40,51 +40,31 @@ router.post("/", verifyToken, async (req, res) => {
             target,
             paymentMethod,
             price,
-            paymentCode,
             note,
         } = req.body;
 
-        if (paymentCode) {
-            const newPayment = new Payments({
-                user: req.userId,
-                revenua,
-                targetGroup,
-                target,
-                paymentMethod,
-                price,
-                paymentCode,
-                note,
-            })
+        const paymentCodeGenerate = `${Math.floor(10000 + Math.random() * 90000)}`
 
-            await newPayment.save()
+        const newPayment = new Payments({
+            user: req.userId,
+            expenditure,
+            targetGroup,
+            target,
+            paymentMethod,
+            price,
+            paymentCode: paymentCodeGenerate,
+            note,
+        })
 
-            res.status(200).json({
-                success: true,
-                message: "Thêm phiếu chi thành công",
-                data: newPayment,
-            })
-        } else {
-            const paymentCodeGenerate = `${Math.floor(10000 + Math.random() * 90000)}`
+        await newPayment.save()
 
-            const newPayment = new Payments({
-                user: req.userId,
-                revenua,
-                targetGroup,
-                target,
-                paymentMethod,
-                price,
-                paymentCode: paymentCodeGenerate,
-                note,
-            })
+        const paymentSaved = await Payments.findOne({ paymentCode: paymentCodeGenerate }).populate({ path: 'expenditure'})
 
-            await newPayment.save()
-
-            res.status(200).json({
-                success: true,
-                message: "Thêm phiếu chi thành công",
-                data: newPayment,
-            })
-        }
+        res.status(200).json({
+            success: true,
+            message: "Thêm phiếu chi thành công",
+            data: paymentSaved,
+        })
     } catch (error) {
         console.log(error);
         res.status(500).json({ success: false, message: "Có gì đó sai sai!" });
@@ -96,16 +76,6 @@ router.post("/", verifyToken, async (req, res) => {
 // @access Public
 router.put("/:id", verifyToken, async (req, res) => {
     try {
-        const { 
-            revenua,
-            targetGroup,
-            target,
-            paymentMethod,
-            price,
-            paymentCode,
-            note,
-        } = req.body;
-
         let payment = Payments.findOne({
             user: req.userId,
             _id: req.params.id,
@@ -117,71 +87,16 @@ router.put("/:id", verifyToken, async (req, res) => {
             .json({ success: false, message: "Không tìm thấy phiếu chi" });
         }
 
-        if (paymentCode) {
-            const data = {
-                revenua,
-                targetGroup,
-                target,
-                paymentMethod,
-                price,
-                paymentCode,
-                note,
-            }
-
-            await Payments.findByIdAndUpdate(req.params.id, data);
-
-            res.status(200).json({
-                success: true,
-                message: "Sửa phiếu chi thành công",
-                data: {
-                    _id: req.params.id,
-                    ...data,
-                },
-            })
-        } else {
-            const paymentCodeGenerate = `${Math.floor(10000 + Math.random() * 90000)}`
-
-            const data = {
-                revenua,
-                targetGroup,
-                target,
-                paymentMethod,
-                price,
-                paymentCode: paymentCodeGenerate,
-                note,
-            }
-
-            await Payments.findByIdAndUpdate(req.params.id, data);
-
-            res.status(200).json({
-                success: true,
-                message: "Sửa phiếu chi thành công",
-                data: {
-                    _id: req.params.id,
-                    ...data,
-                },
-            })
+        const data = {
+            // note,
+            status: "CANCEL"
         }
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ success: false, message: "Có gì đó sai sai!" });
-    }
-});
 
-// @route delete api/customer-group
-// @desc customer-group
-// @access Public
-router.delete("/:id", verifyToken, async (req, res) => {
-    try {
-        const receiptsDelete = await Payments.findOneAndDelete({
-            user: req.userId,
-            _id: req.params.id
-        })
+        await Payments.findByIdAndUpdate(req.params.id, data);
 
         res.status(200).json({
             success: true,
-            message: "Xóa phiếu chi thành công",
-            data: receiptsDelete,
+            message: "Hủy phiếu chi thành công",
         })
     } catch (error) {
         console.log(error);

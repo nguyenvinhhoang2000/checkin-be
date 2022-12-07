@@ -30,6 +30,10 @@ const Payments = new Schema({
     type: String,
     unique: true,
   },
+  status: {
+    type: String,
+    default: 'ACTIVE',
+  },
   note: {
     type: String,
     default: '',
