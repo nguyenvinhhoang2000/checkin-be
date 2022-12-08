@@ -10,8 +10,22 @@ const Payments = require("../models/Payments");
 // @access Public
 router.get("/", verifyToken, async (req, res) => {
     try {
-        const receiptList = await Receipts.find({ user: req.userId, status: "ACTIVE" }).populate({ path: 'revenua'}).sort({ createdAt: -1 });
-        const paymentList = await Payments.find({ user: req.userId, status: "ACTIVE" }).populate({ path: 'expenditure'}).sort({ createdAt: -1 });
+        const { fromDate, toDate } = req.query;
+
+        const currentDate = new Date()
+        console.log(currentDate);
+
+        const receiptList = await Receipts.find({
+            user: req.userId, status: "ACTIVE", createdAt: {
+            $gte: fromDate ? new Date(fromDate) : new Date(`${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-1`),
+            $lt: toDate ? new Date(toDate) : currentDate,
+        }}).populate({ path: 'revenua'}).sort({ createdAt: -1 });
+
+        const paymentList = await Payments.find({
+            user: req.userId, status: "ACTIVE", createdAt: {
+            $gte: fromDate ? new Date(fromDate) : new Date(`${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-1`),
+            $lt: toDate ? new Date(toDate) : currentDate,
+        }}).populate({ path: 'expenditure'}).sort({ createdAt: -1 });
 
         const cashBookList = [
             ...receiptList,
