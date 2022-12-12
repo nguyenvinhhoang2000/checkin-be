@@ -13,7 +13,6 @@ router.get("/", verifyToken, async (req, res) => {
         const { fromDate, toDate } = req.query;
 
         const currentDate = new Date()
-        console.log(currentDate);
 
         const receiptList = await Receipts.find({
             user: req.userId, status: "ACTIVE", createdAt: {

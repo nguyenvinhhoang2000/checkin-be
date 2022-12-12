@@ -101,4 +101,30 @@ router.post("/", verifyToken, async (req, res) => {
     }
 });
 
+// @route get api/expenditures
+// @desc Profile
+// @access Public
+router.put("/:id", verifyToken, async (req, res) => {
+    try {
+        const { 
+            reason,
+        } = req.body; 
+
+        const data = {
+            status: 'CANCELLED',
+            reason,
+        }
+
+        await Order.findByIdAndUpdate(req.params.id, data);
+
+        res.status(200).json({
+            success: true,
+            message: "Hủy đơn hàng thành công",
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: "Có gì đó sai sai!" });
+    }
+});
+
 module.exports = router;

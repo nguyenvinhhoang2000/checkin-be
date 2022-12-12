@@ -90,6 +90,10 @@ const Order = new Schema({
     type: String,
     default: 'CONFIRMATION',
   },
+  reason: {
+    type: String,
+    default: '',
+  },
   createdAt: {
     type: Date,
     default: Date.now,
