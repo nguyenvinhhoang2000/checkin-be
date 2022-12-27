@@ -3,6 +3,7 @@ const router = express.Router();
 const verifyToken = require("../middleware/auth");
 
 const Order = require("../models/Order");
+const Products = require("../models/Products");
 
 // @route POST api/expenditures
 // @desc Register User
@@ -85,6 +86,10 @@ router.post("/", verifyToken, async (req, res) => {
         })
 
         await newOrder.save()
+
+        // products.map(async (item) => {
+        //     await Products.findByIdAndUpdate({ id: item._id })
+        // })
 
         const orderSaved = await Order.find({ user: req.userId, orderCode: orderCodeGenerate })
         .populate({ path: 'customer' })

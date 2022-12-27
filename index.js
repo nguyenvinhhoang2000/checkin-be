@@ -21,6 +21,8 @@ const paymentRouter = require("./routes/payments");
 const orderRouter = require("./routes/order");
 const cashBookRouter = require("./routes/cashBook");
 const turnOverRouter = require("./routes/turnOver");
+const profitRouter = require("./routes/profit");
+const costRouter = require("./routes/cost");
 
 const connecDB = async () => {
   try {
@@ -70,6 +72,8 @@ app.use("/api/payment", paymentRouter);
 app.use("/api/order", orderRouter);
 app.use("/api/cash-book", cashBookRouter);
 app.use("/api/turn-over", turnOverRouter);
+app.use("/api/profit", profitRouter);
+app.use("/api/cost", costRouter);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`server started on port ${PORT}`));

@@ -2,8 +2,7 @@ const express = require("express");
 const router = express.Router();
 const verifyToken = require("../middleware/auth");
 
-const Receipts = require("../models/Receipts");
-const Payments = require("../models/Payments");
+const Profit = require("../models/Profit");
 
 // @route POST api/target-group
 // @desc Register User
@@ -25,32 +24,15 @@ router.get("/", verifyToken, async (req, res) => {
             newToDate.setSeconds(currentDate.getSeconds());
         }
 
-        const receiptList = await Receipts.find({
-            user: req.userId, status: "ACTIVE", createdAt: {
+        const profits = await Profit.find({ user: req.userId, createdAt: {
             $gte: fromDate ? new Date(fromDate) : new Date(`${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-1`),
             $lt: toDate ? newToDate : currentDate,
-        }}).populate({ path: 'revenua'}).sort({ createdAt: -1 });
-
-        const paymentList = await Payments.find({
-            user: req.userId, status: "ACTIVE", createdAt: {
-            $gte: fromDate ? new Date(fromDate) : new Date(`${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-1`),
-            $lt: toDate ? newToDate : currentDate,
-        }}).populate({ path: 'expenditure'}).sort({ createdAt: -1 });
-
-        const cashBookList = [
-            ...receiptList,
-            ...paymentList
-        ]
-
-        cashBookList.sort((a,b) => b.createdAt - a.createdAt);
+        }});
 
         res.status(200).json({
             success: true,
-            message: "Lấy danh sách sổ quỹ thành công",
-            data: {
-                list: cashBookList,
-                total: cashBookList.length,
-            },
+            message: "Lấy danh sách doanh thu thành công",
+            data: profits,
         })
     } catch (error) {
         res.status(200).json({
@@ -59,5 +41,34 @@ router.get("/", verifyToken, async (req, res) => {
         })
     }
 })
+
+// @route get api/target-group
+// @desc Profile
+// @access Public
+router.post("/", verifyToken, async (req, res) => {
+    try {
+        const { 
+            name,
+            price,
+        } = req.body;
+
+        const newProfit = new Profit({
+            user: req.userId,
+            name,
+            price,
+        })
+
+        await newProfit.save()
+
+        res.status(200).json({
+            success: true,
+            message: "Thêm doanh thu thành công",
+            data: newProfit,
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: "Có gì đó sai sai!" });
+    }
+});
 
 module.exports = router;
