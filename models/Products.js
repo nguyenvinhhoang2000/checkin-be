@@ -64,4 +64,6 @@ const ProductGroup = new Schema({
   },
 });
 
+ProductGroup.index({ name: 'text', productCode: 'text'})
+
 module.exports = mongoose.model("products", ProductGroup);

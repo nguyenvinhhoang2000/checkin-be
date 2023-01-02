@@ -1,3 +1,4 @@
+const e = require("cors");
 const express = require("express");
 const router = express.Router();
 const verifyToken = require("../middleware/auth");
@@ -58,6 +59,14 @@ router.post("/", verifyToken, async (req, res) => {
             receipts,
         } = req.body;
 
+        products.forEach(async (element) => {
+            const data = {
+                inventoryNumber: element.inventoryNumber - element.quantity,
+            }
+
+            await Products.findByIdAndUpdate(element._id, data)
+        });
+
         const orderCodeGenerate = `${Math.floor(10000 + Math.random() * 90000)}`
 
         const newOrder = new Order({
@@ -87,10 +96,6 @@ router.post("/", verifyToken, async (req, res) => {
 
         await newOrder.save()
 
-        // products.map(async (item) => {
-        //     await Products.findByIdAndUpdate({ id: item._id })
-        // })
-
         const orderSaved = await Order.find({ user: req.userId, orderCode: orderCodeGenerate })
         .populate({ path: 'customer' })
         .sort({ createdAt: -1 });
@@ -109,7 +114,35 @@ router.post("/", verifyToken, async (req, res) => {
 // @route get api/expenditures
 // @desc Profile
 // @access Public
-router.put("/:id", verifyToken, async (req, res) => {
+router.put("/pay/:id", verifyToken, async (req, res) => {
+    try {
+        const { pay, receipts } = req.body;
+
+        const data = {
+            pay,
+            receipts,
+        }
+
+        await Order.findByIdAndUpdate(req.params.id, data)
+
+        const orderSaved = await Order.findById(req.params.id)
+        .populate({ path: 'customer' })
+
+        res.status(200).json({
+            success: true,
+            message: "Thanh toán đơn hàng thành công",
+            data: orderSaved,
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: "Có gì đó sai sai!" });
+    }
+});
+
+// @route get api/expenditures
+// @desc Profile
+// @access Public
+router.put("/cancel/:id", verifyToken, async (req, res) => {
     try {
         const { 
             reason,
@@ -122,7 +155,11 @@ router.put("/:id", verifyToken, async (req, res) => {
 
         await Order.findByIdAndUpdate(req.params.id, data);
 
+        const orderSaved = await Order.findById(req.params.id)
+        .populate({ path: 'customer' })
+
         res.status(200).json({
+            data: orderSaved,
             success: true,
             message: "Hủy đơn hàng thành công",
         })

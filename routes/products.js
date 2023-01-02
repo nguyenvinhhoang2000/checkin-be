@@ -3,6 +3,7 @@ const router = express.Router();
 const verifyToken = require("../middleware/auth");
 
 const Products = require("../models/Products");
+const ProductGroup = require("../models/ProductGroup");
 
 // @route POST api/target-group
 // @desc Register User
@@ -31,16 +32,38 @@ router.get("/all", verifyToken, async (req, res) => {
 // @access Public
 router.get("/", verifyToken, async (req, res) => {
     try {
-        const products = await Products.find({ user: req.userId })
-        .populate([{path: 'unit'}, {path: 'productGroup'}])
-        .sort({ createdAt: -1 });
+        const { q, limit, page } = req.query;
+
+        const parseLimit = parseInt(limit)
+        const parsePage = parseInt(page);
+        const skip = (parsePage - 1) * parseLimit;
+        
+        let products;
+        let totalProducts;
+
+        if (q) {
+            products = await Products.find({user: req.userId,  $text: {$search: q} })
+            .skip(skip).limit(parseLimit)
+            .populate([{path: 'unit'}, {path: 'productGroup'}])
+            .sort({ createdAt: -1 });
+
+            totalProducts = await Products.find({user: req.userId,  $text: {$search: q} })
+        } else {
+            products = await Products.find({user: req.userId})
+            .skip(skip).limit(parseLimit)
+            .populate([{path: 'unit'}, {path: 'productGroup'}])
+            .sort({ createdAt: -1 });
+
+            totalProducts = await Products.find({user: req.userId})
+        }
+
 
         res.status(200).json({
             success: true,
             message: "Lấy thông tin sản phẩm thành công",
             data: {
                 list: products,
-                total: products.length,
+                total: totalProducts.length,
             },
         })
     } catch (error) {
@@ -71,6 +94,14 @@ router.post("/", verifyToken, async (req, res) => {
             avatar,
             cloudinary_id,
         } = req.body;
+
+        const getProductGroup = await ProductGroup.findById(productGroup)
+
+        const data = {
+            total: Number(getProductGroup.total) + 1,
+        }
+
+        await ProductGroup.findByIdAndUpdate(productGroup, data)
 
         if (productCode) {
             const product = new Products({
@@ -136,30 +167,37 @@ router.post("/", verifyToken, async (req, res) => {
 // @access Public
 router.put("/:id", verifyToken, async (req, res) => {
     try {
-        const {
+        const { 
             name,
-            groupCode,
+            productCode,
+            productGroup,
+            status,
             description,
-            defaultDiscount,
+            isHidden,
+            price,
+            costPrice,
+            inventoryNumber,
+            mass,
+            unit,
+            avatar,
+            cloudinary_id,
         } = req.body;
 
-        let customerGroup = Products.findOne({
-            user: req.userId,
-            _id: req.params.id,
-        })
-
-        if (!customerGroup) {
-            res
-            .status(400)
-            .json({ success: false, message: "Không tìm thấy nhóm khách hàng" });
-        }
-
-        if (groupCode) {
+        if (productCode) {
             const data = {
                 name,
-                groupCode,
+                productCode,
+                productGroup,
+                status,
                 description,
-                defaultDiscount,
+                isHidden,
+                price,
+                costPrice,
+                inventoryNumber,
+                mass,
+                unit,
+                avatar,
+                cloudinary_id,
             }
 
             await Products.findByIdAndUpdate(req.params.id, data);
@@ -177,9 +215,18 @@ router.put("/:id", verifyToken, async (req, res) => {
 
             const data = {
                 name,
-                groupCode: groupCodeGenerate,
+                productCode: groupCodeGenerate,
+                productGroup,
+                status,
                 description,
-                defaultDiscount,
+                isHidden,
+                price,
+                costPrice,
+                inventoryNumber,
+                mass,
+                unit,
+                avatar,
+                cloudinary_id,
             }
 
             await Products.findByIdAndUpdate(req.params.id, data);
@@ -204,10 +251,22 @@ router.put("/:id", verifyToken, async (req, res) => {
 // @access Public
 router.delete("/:id", verifyToken, async (req, res) => {
     try {
+        const getProduct = await Products.findById(req.params.id)
+        const getProductGroup = await ProductGroup.findById(getProduct.productGroup)
+
+        if (getProductGroup) {
+            const data = {
+                total: Number(getProductGroup.total) - 1,
+            }
+
+            await ProductGroup.findByIdAndUpdate(getProduct.productGroup, data)
+        }
+
         const customerDelete = await Products.findOneAndDelete({
             user: req.userId,
-            _id: req.params.id
+            _id: req.params.id,
         })
+
 
         res.status(200).json({
             success: true,

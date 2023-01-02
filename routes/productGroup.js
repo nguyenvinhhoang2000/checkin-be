@@ -39,36 +39,36 @@ router.post("/", verifyToken, async (req, res) => {
         } = req.body;
 
         if (productGroupCode) {
-            const ProductGroup = new ProductGroup({
+            const newProductGroup = new ProductGroup({
                 user: req.userId,
                 name,
                 productGroupCode,
                 description,
             })
 
-            await ProductGroup.save()
+            await newProductGroup.save()
 
             res.status(200).json({
                 success: true,
                 message: "Thêm nhóm sản phẩm thành công",
-                data: ProductGroup,
+                data: newProductGroup,
             })
         } else {
             const productGroupCodeGenerate = `${Math.floor(10000 + Math.random() * 90000)}`
 
-            const newUnit = new ProductGroup({
+            const newProductGroup = new ProductGroup({
                 user: req.userId,
                 name,
                 productGroupCode: productGroupCodeGenerate,
                 description,
             })
 
-            await newUnit.save()
+            await newProductGroup.save()
 
             res.status(200).json({
                 success: true,
                 message: "Thêm nhóm sản phẩm thành công",
-                data: newUnit,
+                data: newProductGroup,
             })
         }
     } catch (error) {
@@ -82,37 +82,35 @@ router.post("/", verifyToken, async (req, res) => {
 // @access Public
 router.put("/:id", verifyToken, async (req, res) => {
     try {
-        const {
+        const { 
             name,
-            groupCode,
+            productGroupCode,
             description,
-            defaultDiscount,
         } = req.body;
 
-        let customerGroup = ProductGroup.findOne({
+        let productGroup = ProductGroup.findOne({
             user: req.userId,
             _id: req.params.id,
         })
 
-        if (!customerGroup) {
+        if (!productGroup) {
             res
             .status(400)
-            .json({ success: false, message: "Không tìm thấy nhóm khách hàng" });
+            .json({ success: false, message: "Không tìm thấy nhóm sản phẩm" });
         }
 
         if (groupCode) {
             const data = {
                 name,
-                groupCode,
+                productGroupCode,
                 description,
-                defaultDiscount,
             }
 
             await ProductGroup.findByIdAndUpdate(req.params.id, data);
 
             res.status(200).json({
                 success: true,
-                message: "Sửa nhóm khách hàng thành công",
+                message: "Sửa nhóm sản phẩm thành công",
                 data: {
                     _id: req.params.id,
                     ...data,
@@ -123,16 +121,15 @@ router.put("/:id", verifyToken, async (req, res) => {
 
             const data = {
                 name,
-                groupCode: groupCodeGenerate,
+                productGroupCode: groupCodeGenerate,
                 description,
-                defaultDiscount,
             }
 
             await ProductGroup.findByIdAndUpdate(req.params.id, data);
 
             res.status(200).json({
                 success: true,
-                message: "Sửa nhóm khách hàng thành công",
+                message: "Sửa nhóm sản phẩm thành công",
                 data: {
                     _id: req.params.id,
                     ...data,
@@ -150,15 +147,15 @@ router.put("/:id", verifyToken, async (req, res) => {
 // @access Public
 router.delete("/:id", verifyToken, async (req, res) => {
     try {
-        const customerDelete = await ProductGroup.findOneAndDelete({
+        const productDelete = await ProductGroup.findOneAndDelete({
             user: req.userId,
             _id: req.params.id
         })
 
         res.status(200).json({
             success: true,
-            message: "Xóa nhóm khách hàng thành công",
-            data: customerDelete,
+            message: "Xóa nhóm sản phẩm thành công",
+            data: productDelete,
         })
     } catch (error) {
         console.log(error);
