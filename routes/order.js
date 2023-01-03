@@ -114,6 +114,33 @@ router.post("/", verifyToken, async (req, res) => {
 // @route get api/expenditures
 // @desc Profile
 // @access Public
+router.put("/status/:id", verifyToken, async (req, res) => {
+    try {
+        const { status } = req.body;
+
+        const data = {
+            status,
+        }
+
+        await Order.findByIdAndUpdate(req.params.id, data)
+
+        const orderSaved = await Order.findById(req.params.id)
+        .populate({ path: 'customer' })
+
+        res.status(200).json({
+            success: true,
+            message: "Chuyển trạng thái đơn hàng thành công",
+            data: orderSaved,
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: "Có gì đó sai sai!" });
+    }
+});
+
+// @route get api/expenditures
+// @desc Profile
+// @access Public
 router.put("/pay/:id", verifyToken, async (req, res) => {
     try {
         const { pay, receipts } = req.body;
@@ -148,6 +175,12 @@ router.put("/cancel/:id", verifyToken, async (req, res) => {
             reason,
         } = req.body; 
 
+        const getOrder = await Order.findById(req.params.id)
+
+        getOrder.products.forEach(async (element) => {
+            await Products.findByIdAndUpdate(element._id, { $inc: { inventoryNumber: element.quantity } })
+        });
+        
         const data = {
             status: 'CANCELLED',
             reason,
