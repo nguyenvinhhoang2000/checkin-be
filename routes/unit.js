@@ -9,14 +9,36 @@ const Unit = require("../models/Unit");
 // @access Public
 router.get("/", verifyToken, async (req, res) => {
     try {
-        const units = await Unit.find({ user: req.userId }).sort({ createdAt: -1 });
+        const { q, limit, page } = req.query;
+
+        const parseLimit = parseInt(limit)
+        const parsePage = parseInt(page);
+        const skip = (parsePage - 1) * parseLimit;
+        
+        let units;
+        let totalUnits;
+
+        if (q) {
+            units = await Unit.find({user: req.userId,  $text: {$search: q} })
+            .skip(skip).limit(parseLimit)
+            .sort({ createdAt: -1 });
+
+            totalUnits = await Unit.find({user: req.userId,  $text: {$search: q} })
+        } else {
+            units = await Unit.find({user: req.userId})
+            .skip(skip).limit(parseLimit)
+            .sort({ createdAt: -1 });
+
+            totalUnits = await Unit.find({user: req.userId})
+        }
+
 
         res.status(200).json({
             success: true,
             message: "Lấy thông tin đơn vị thành công",
             data: {
                 list: units,
-                total: units.length,
+                total: totalUnits.length,
             },
         })
     } catch (error) {

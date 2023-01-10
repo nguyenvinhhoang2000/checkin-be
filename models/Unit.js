@@ -28,4 +28,6 @@ const Unit = new Schema({
   },
 });
 
+Unit.index({ name: 'text', unitCode: 'text'})
+
 module.exports = mongoose.model("unit", Unit);

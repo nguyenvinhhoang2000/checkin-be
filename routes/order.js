@@ -11,16 +11,37 @@ const Products = require("../models/Products");
 // @access Public
 router.get("/", verifyToken, async (req, res) => {
     try {
-        const OrderList = await Order.find({ user: req.userId })
-        .populate({ path: 'customer' })
-        .sort({ createdAt: -1 });
+        const { q, limit, page } = req.query;
+
+        const parseLimit = parseInt(limit)
+        const parsePage = parseInt(page);
+        const skip = (parsePage - 1) * parseLimit;
+
+        let orders;
+        let totalOrders;
+
+        if (q) {
+            orders = await Order.find({user: req.userId,  $text: {$search: q} })
+            .skip(skip).limit(parseLimit)
+            .populate({ path: 'customer' })
+            .sort({ createdAt: -1 });
+
+            totalOrders = await Order.find({user: req.userId,  $text: {$search: q} })
+        } else {
+            orders = await Order.find({user: req.userId})
+            .skip(skip).limit(parseLimit)
+            .populate({ path: 'customer' })
+            .sort({ createdAt: -1 });
+
+            totalOrders = await Order.find({user: req.userId})
+        }
 
         res.status(200).json({
             success: true,
             message: "Lấy thông tin đơn hàng thành công",
             data: {
-                list: OrderList,
-                total: OrderList.length,
+                list: orders,
+                total: totalOrders.length,
             },
         })
     } catch (error) {

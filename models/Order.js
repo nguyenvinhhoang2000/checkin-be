@@ -100,4 +100,6 @@ const Order = new Schema({
   },
 });
 
+Order.index({ orderCode: 'text' })
+
 module.exports = mongoose.model("order", Order);

@@ -28,4 +28,6 @@ const ProductGroup = new Schema({
   },
 });
 
+ProductGroup.index({ name: 'text', productGroupCode: 'text'})
+
 module.exports = mongoose.model("product_group", ProductGroup);

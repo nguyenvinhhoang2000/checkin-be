@@ -29,14 +29,37 @@ router.get("/all", verifyToken, async (req, res) => {
 // @access Public
 router.get("/", verifyToken, async (req, res) => {
     try {
-        const customer = await Customer.find({ user: req.userId }).populate({ path: 'customerGroup'}).sort({ createdAt: -1 });
+        const { q, limit, page } = req.query;
+
+        const parseLimit = parseInt(limit)
+        const parsePage = parseInt(page);
+        const skip = (parsePage - 1) * parseLimit;
+        
+        let customers;
+        let totalCustomers;
+
+        if (q) {
+            customers = await Customer.find({user: req.userId,  $text: {$search: q} })
+            .skip(skip).limit(parseLimit)
+            .populate({ path: 'customerGroup'})
+            .sort({ createdAt: -1 });
+
+            totalCustomers = await Customer.find({user: req.userId,  $text: {$search: q} })
+        } else {
+            customers = await Customer.find({user: req.userId})
+            .skip(skip).limit(parseLimit)
+            .populate({ path: 'customerGroup'})
+            .sort({ createdAt: -1 });
+
+            totalCustomers = await Customer.find({user: req.userId})
+        }
 
         res.status(200).json({
             success: true,
             message: "Lấy danh sách khách hàng thành công",
             data: {
-                list: customer,
-                total: customer.length,
+                list: customers,
+                total: totalCustomers.length,
             },
         })
     } catch (error) {

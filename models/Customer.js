@@ -72,4 +72,6 @@ const Customer = new Schema({
   },
 });
 
+Customer.index({ phoneNumber: 'text', customerCode: 'text'})
+
 module.exports = mongoose.model("customer", Customer);
