@@ -1,47 +1,34 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const UserSchema = new Schema({
-  name: {
+const OrganizationSchema = new Schema({
+  businessName: {
     type: String,
     required: true,
   },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  password: {
+  address: {
     type: String,
     required: true,
   },
-  phoneNumber: {
-    type: String,
-    required: true
-  },
-  gender: {
+  numberOfWorkingDays: {
     type: Number,
-    required: true
+    required: true,
   },
-  note: {
+  workTimeEnd: {
     type: String,
     required: true
   },
-  position: {
+  workTimeStart: {
     type: String,
     required: true
   },
-  status: {
+  ips: {
     type: String,
-    default: "ACTIVE",
+    default: "",
   },
   adminId: {
     type: Schema.Types.ObjectId,
     ref: "admins",
-  },
-  avatar: {
-    type: Number,
-    default: 1,
   },
   createdAt: {
     type: Date,
@@ -49,6 +36,4 @@ const UserSchema = new Schema({
   },
 });
 
-UserSchema.index({ name: 'text' })
-
-module.exports = mongoose.model("users", UserSchema);
+module.exports = mongoose.model("organizations", OrganizationSchema);

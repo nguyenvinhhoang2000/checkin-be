@@ -4,31 +4,20 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 
+// admin
+const authAdminRouter = require("./routes/authAdmin");
+const memberRouter = require("./routes/member");
+const organizationRouter = require("./routes/organization");
+
+// user
 const authRouter = require("./routes/auth");
 const userRouter = require("./routes/user");
-const shopRouter = require("./routes/shop");
-const customerGroupRouter = require("./routes/customerGroup");
-const supplierGroupRouter = require("./routes/supplierGroup");
-const customerRouter = require("./routes/customer");
-const unitRouter = require("./routes/unit");
-const mediaRouter = require("./routes/media");
-const productGroupRouter = require("./routes/productGroup");
-const productsRouter = require("./routes/products");
-const revenuaRouter = require("./routes/revenua");
-const expenditureRouter = require("./routes/expenditure");
-const receiptRouter = require("./routes/receipts");
-const paymentRouter = require("./routes/payments");
-const orderRouter = require("./routes/order");
-const cashBookRouter = require("./routes/cashBook");
-const turnOverRouter = require("./routes/turnOver");
-const profitRouter = require("./routes/profit");
-const costRouter = require("./routes/cost");
 // a
 
 const connecDB = async () => {
   try {
     await mongoose.connect(
-      `mongodb+srv://nguyenvinhhoang2000:1234@om-db.r30wkcc.mongodb.net/OM`,
+      `mongodb+srv://nguyenvinhhoang2000:1234@checkinapp.rdojqcw.mongodb.net/?retryWrites=true&w=majority&appName=CheckinApp`,
       {
         useUnifiedTopology: true,
       }
@@ -56,25 +45,15 @@ app.get("/", async (req, res) => {
   res.json("HOME")
 })
 
+// admin
+app.use("/api/admin/auth", authAdminRouter);
+app.use("/api/admin/member", memberRouter);
+app.use("/api/admin/organizations", organizationRouter);
+
+
+// user
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
-app.use("/api/shop", shopRouter);
-app.use("/api/customer-group", customerGroupRouter);
-app.use("/api/supplier-group", supplierGroupRouter);
-app.use("/api/customer", customerRouter);
-app.use("/api/unit", unitRouter);
-app.use("/api/media", mediaRouter);
-app.use("/api/product-group", productGroupRouter);
-app.use("/api/products", productsRouter);
-app.use("/api/revenuas", revenuaRouter);
-app.use("/api/expenditures", expenditureRouter);
-app.use("/api/receipt", receiptRouter);
-app.use("/api/payment", paymentRouter);
-app.use("/api/order", orderRouter);
-app.use("/api/cash-book", cashBookRouter);
-app.use("/api/turn-over", turnOverRouter);
-app.use("/api/profit", profitRouter);
-app.use("/api/cost", costRouter);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`server started on port ${PORT}`));

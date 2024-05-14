@@ -10,7 +10,7 @@ const cloudinary = require("../utils/cloudinary");
 const verifyToken = require("../middleware/auth");
 
 const User = require("../models/User");
-const UserOTPVerification = require("../models/UserOTPVerification");
+// const UserOTPVerification = require("../models/UserOTPVerification");
 
 let transporter = nodemailer.createTransport({
   host: "smtp-mail.outlook.com",
@@ -127,40 +127,6 @@ router.post("/verify-otp", async (req, res) => {
   }
 });
 
-// @route POST api/v1/auth/register
-// @desc Register User
-// @access Public
-router.post("/register", async (req, res) => {
-  const { email, password, role, firstName, lastName, phoneNumber } = req.body;
-
-  try {
-    //upload image
-    // const result = await cloudinary.uploader.upload(req.file.path, {
-    //   folder: "UserImg",
-    // });
-
-    //All good
-    const hashedPassword = await argon2.hash(password);
-    const newUser = new User({
-      email,
-      password: hashedPassword,
-      role,
-      firstName,
-      lastName,
-      phoneNumber,
-    });
-    await newUser.save()
-
-    res.status(200).json({
-      success: true,
-      message: "Đăng ký tài khoản thành công",
-    })
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ success: false, message: "Có lỗi ở phía server" });
-  }
-});
-
 // @route POST api/auth/login
 // @desc Login User
 // @access Public
@@ -176,6 +142,7 @@ router.post("/login", async (req, res) => {
   try {
     //Check for existing user
     const user = await User.findOne({ email });
+    console.log(user);
     if (!user)
       return res.status(400).json({
         success: false,
@@ -198,14 +165,8 @@ router.post("/login", async (req, res) => {
     );
 
     res.json({
-      success: true,
       message: "Đăng nhập thành công",
-      user: {
-        name: user.name,
-        role: user.role,
-        avatar: user.avatar,
-      },
-      accessToken,
+      token: accessToken
     });
   } catch (error) {
     console.log(error);

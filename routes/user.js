@@ -6,10 +6,10 @@ const cloudinary = require("../utils/cloudinary");
 
 const User = require("../models/User");
 
-// @route POST api/user/me
+// @route POST api/user
 // @desc Register User
 // @access Public
-router.get("/me", verifyToken, async (req, res) => {
+router.get("/", verifyToken, async (req, res) => {
     try {
         //Check for exitsting user
         const user = await User.findOne({ _id: req.userId });
@@ -17,15 +17,7 @@ router.get("/me", verifyToken, async (req, res) => {
         res.status(200).json({
             success: true,
             message: "Lấy thông tin tài khoản thành công",
-            data: {
-                firstName: user.firstName,
-                lastName: user.lastName,
-                email: user.email,
-                phoneNumber: user.phoneNumber,
-                role: user.role,
-                avatar: user.avatar,
-                cloudinary_id: user.cloudinary_id,
-            },
+            payload: user,
         })
     } catch (error) {
         res.status(200).json({
